@@ -1,10 +1,10 @@
 package com.bridgelabz.fundoo.label.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Entity
@@ -12,15 +12,16 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Label {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column("labelId")
     private Long labelId;
 
-    @Column(name = "noteId")
+    @Column("noteId")
     private Long noteId;
 
-    @Column(name = "userId")
+    @Column("userId")
     private Long userId;
 
+    @Column("title")
     private String title;
 
     public Long getLabelId() {
