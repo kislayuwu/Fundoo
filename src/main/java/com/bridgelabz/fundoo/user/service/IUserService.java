@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface IUserService {
 
-    public Mono<com.bridgelabz.fundoo.response.Response> saveUser(User user);
+    public Flux<Object> saveUser(User user);
 
     public Mono<Response> deleteUserById(int id);
 

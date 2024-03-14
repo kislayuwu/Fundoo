@@ -1,11 +1,12 @@
 package com.bridgelabz.fundoo.notes.service;
 
+import com.bridgelabz.fundoo.exception.ResourceNotFoundException;
 import com.bridgelabz.fundoo.notes.model.Notes;
 import com.bridgelabz.fundoo.notes.repository.NotesRepository;
 import com.bridgelabz.fundoo.response.Response;
+import com.bridgelabz.fundoo.utils.StatusHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.bridgelabz.fundoo.utils.StatusHelper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,19 +19,22 @@ public class NotesService implements INotesService {
     @Override
     public Mono<Response> saveNote(Notes note) {
         return repository.save(note)
-                .thenReturn(StatusHelper.statusInfo("Note saved successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note saved successfully", 200))
+                .onErrorResume(error -> Mono.just(StatusHelper.statusInfo("Failed to save note: " + error.getMessage(), 500)));
     }
 
     @Override
     public Mono<Response> deleteNote(int id) {
         return repository.findById(id)
                 .flatMap(note -> repository.delete(note).then(Mono.just(note)))
-                .thenReturn(StatusHelper.statusInfo("Note deleted successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note deleted successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
     public Mono<Notes> showNotesById(int id) {
-        return repository.findById(id);
+        return repository.findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
@@ -40,7 +44,8 @@ public class NotesService implements INotesService {
                     note.setArchive(true);
                     return repository.save(note);
                 })
-                .thenReturn(StatusHelper.statusInfo("Note archived successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note archived successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
@@ -50,7 +55,8 @@ public class NotesService implements INotesService {
                     note.setPinned(true);
                     return repository.save(note);
                 })
-                .thenReturn(StatusHelper.statusInfo("Note pinned successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note pinned successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
@@ -60,7 +66,8 @@ public class NotesService implements INotesService {
                     note.setTrash(true);
                     return repository.save(note);
                 })
-                .thenReturn(StatusHelper.statusInfo("Note moved to trash successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note moved to trash successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
@@ -70,7 +77,8 @@ public class NotesService implements INotesService {
                     note.setArchive(false);
                     return repository.save(note);
                 })
-                .thenReturn(StatusHelper.statusInfo("Note unarchived successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note unarchived successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
@@ -80,7 +88,8 @@ public class NotesService implements INotesService {
                     note.setPinned(false);
                     return repository.save(note);
                 })
-                .thenReturn(StatusHelper.statusInfo("Note unpinned successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note unpinned successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
@@ -90,11 +99,13 @@ public class NotesService implements INotesService {
                     note.setTrash(false);
                     return repository.save(note);
                 })
-                .thenReturn(StatusHelper.statusInfo("Note restored from trash successfully", 200));
+                .thenReturn(StatusHelper.statusInfo("Note restored from trash successfully", 200))
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Note not found")));
     }
 
     @Override
     public Flux<Notes> showNotesByUserId(int userId) {
-        return repository.findByUserId(userId);
+        return repository.findByUserId(userId)
+                .switchIfEmpty(Flux.error(new ResourceNotFoundException("No notes found for user")));
     }
 }
