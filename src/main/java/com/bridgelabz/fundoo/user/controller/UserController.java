@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
-import javax.xml.xpath.XPathVariableResolver;
-
 @RestController
 public class UserController {
 
@@ -19,7 +17,7 @@ public class UserController {
 
 
     @PostMapping("/saveUser")
-    public Mono<ResponseEntity<Response>> registerUser(@RequestBody User user) {
+    public Mono<ResponseEntity<Object>> registerUser(@RequestBody User user) {
         return service.saveUser(user)
                 .map(response -> ResponseEntity.ok().body(response));
     }

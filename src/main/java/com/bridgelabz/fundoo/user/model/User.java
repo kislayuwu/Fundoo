@@ -1,16 +1,27 @@
 package com.bridgelabz.fundoo.user.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
     @Table(name = "user")
     public class User {
         @Id
+        @Column("userId")
         private int id;
+        @Column("name")
         private String name;
+
+        @Column("phone")
         private String phone;
+
+        @Column("email")
         private String email;
+
+        @Column("password")
         private String password;
+
+        @Column("verified")
         private boolean verified = false;
 
         public boolean isVerified() {
