@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface IUserService {
 
-    public Mono<Object> saveUser(User user);
+    public Mono<Response> saveUser(User user);
 
     public Mono<Response> deleteUserById(int id);
 

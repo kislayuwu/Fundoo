@@ -11,6 +11,4 @@ public class StatusHelper {
         return response;
 
     }
-
-
 }

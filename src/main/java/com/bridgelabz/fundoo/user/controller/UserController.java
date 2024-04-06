@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired

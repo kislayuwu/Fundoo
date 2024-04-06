@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
     @Table(name = "user")
-    public class User {
+    public class User{
         @Id
         @Column("userId")
         private int id;

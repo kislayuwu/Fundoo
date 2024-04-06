@@ -8,7 +8,6 @@ import javax.annotation.processing.Generated;
 
 @Table("notes")
 public class Notes {
-
     @Id
     @Column("noteId")
     private int noteId;

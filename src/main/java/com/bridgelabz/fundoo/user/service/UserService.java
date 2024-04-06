@@ -1,6 +1,5 @@
 package com.bridgelabz.fundoo.user.service;
 
-import com.bridgelabz.fundoo.exception.ResourceAlreadyExistsException;
 import com.bridgelabz.fundoo.exception.ResourceNotFoundException;
 import com.bridgelabz.fundoo.response.Response;
 import com.bridgelabz.fundoo.user.model.User;
@@ -16,22 +15,17 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository repository;
-
+     
     @Override
-    public Mono<Object> saveUser(User user) {
+    public Mono<Response> saveUser(User user) {
         return repository.findByEmail(user.getEmail())
                 .flatMap(existingUser -> {
                     // If user with the same email already exists, return error response
-                    return Mono.error(new ResourceAlreadyExistsException("User with email " + user.getEmail() + " already exists"))
-                            .onErrorResume(ex -> Mono.just(StatusHelper.statusInfo("Failed to save user: " + ex.getMessage(), 500)));
+                    return  Mono.just(StatusHelper.statusInfo("Failed to save user: " , 500));
                 })
                 .switchIfEmpty(repository.save(user)
-                        .thenReturn(StatusHelper.statusInfo("User saved successfully", 200))
-                        .onErrorResume(ex -> Mono.just(StatusHelper.statusInfo("Failed to save user: " + ex.getMessage(), 500))));
+                        .thenReturn(StatusHelper.statusInfo("User saved successfully", 200)));
     }
-
-
-
     @Override
     public Mono<Response> deleteUserById(int id) {
         return repository.findById((int) id)
@@ -39,15 +33,13 @@ public class UserService implements IUserService {
                 .flatMap(user -> repository.delete(user).then(Mono.just(user)))
                 .thenReturn(StatusHelper.statusInfo("User successfully deleted", 200));
     }
-
     @Override
     public Flux<User> allUsers() {
         return repository.findAll();
     }
-
     @Override
     public Mono<User> showUserById(int id) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("User not found with id " + id)));
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("User not found with id " + id)))   ;
     }
 }

@@ -20,7 +20,6 @@ public class LabelController {
         return labelService.createLabel(label)
                 .map(response -> ResponseEntity.ok().body(response));
     }
-
     @GetMapping("/userLabel/{noteId}")
     public Flux<Label> getLabelByUserId(@PathVariable int noteId){
         return labelService.getLabelsByNoteId(noteId);
